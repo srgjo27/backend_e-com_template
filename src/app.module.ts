@@ -15,6 +15,7 @@ import { Cart, CartItem } from './cart/entity/cart.entity';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { Wishlist } from './wishlist/entity/wishlist.entity';
 import { Review } from './reviews/entity/review.entity';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { Review } from './reviews/entity/review.entity';
     CartModule,
     ReviewsModule,
     WishlistModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}
