@@ -4,15 +4,15 @@ import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt/jwt.strategy';
+import { SecretKey } from 'src/constant/secret_key';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     PassportModule,
     JwtModule.register({
-      privateKey: process.env.JWT_PRIVATE_KEY.replace(/\\n/gm, '\n'),
-      publicKey: process.env.JWT_PUBLIC_KEY.replace(/\\n/gm, '\n'),
-      signOptions: { expiresIn: '60m' },
+      secret: SecretKey.jwtSecret,
+      signOptions: { expiresIn: '1h' },
     }),
   ],
   providers: [AuthService, JwtStrategy],

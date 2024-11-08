@@ -1,7 +1,13 @@
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import { IsOptional, IsString, MinLength, ValidateNested } from 'class-validator';
 import { IsStrongPassword } from 'src/helper/custom_validator_password';
+import { Profile } from '../entity/profile.entity';
+import { Type } from 'class-transformer';
 
 export class UpdateUserDto {
+  @IsOptional()
+  @IsString()
+  username?: string;
+
   @IsOptional()
   @IsString()
   @MinLength(6)
@@ -9,6 +15,7 @@ export class UpdateUserDto {
   password?: string;
 
   @IsOptional()
-  @IsString()
-  profile?: string;
+  @ValidateNested()
+  @Type(() => Profile)
+  profile?: Partial<Profile>;
 }

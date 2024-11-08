@@ -19,11 +19,10 @@ This is a simple backend project using Node.js and Nest.js to create a RESTful A
 ### 3. Create Enviroment Variables
 Copy .env.example to .env and configure the necessary enviroment variables.
 
-### 4. Generate SSL Certificates
+### 4. Generate JWT Random Secret Certificates
 Generate private.pem and public.pem files:
    ```sh
-   openssl genrsa -out private.pem 2048
-   openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    ```
 
 ### 5. Run the project

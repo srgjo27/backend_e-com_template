@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/service/users.service';
@@ -25,8 +25,9 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const payload = { email: user.email, sub: user.id, role: user.role };
+    Logger.log(payload);
     return {
-        access_token: this.jwtService.sign(payload, { privateKey: SecretKey.privateKey, algorithm: 'RS256' }),
+      access_token: this.jwtService.sign(payload, { secret: SecretKey.jwtSecret }),
     };
   }
 }

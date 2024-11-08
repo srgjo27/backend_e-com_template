@@ -15,12 +15,5 @@
 # dotenv environment variable files
 .env
 
-# pem
-/private.pem
-/public.pem
-
-# secreat key
-/constant
-
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
