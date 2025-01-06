@@ -1,15 +1,28 @@
-import { Controller, Post, Body, Get, Delete, Req, HttpStatus, UseGuards, Patch, Param } from '@nestjs/common';
+import { 
+  Controller, 
+  Post, 
+  Body, 
+  Get, 
+  Delete, 
+  Req, 
+  UseGuards, 
+  Patch, 
+  Param
+} from '@nestjs/common';
+import { 
+  ApiBearerAuth, 
+  ApiBody, 
+  ApiTags 
+} from '@nestjs/swagger';
 import { UsersService } from '../service/users.service';
-import { AuthService } from 'src/auth/service/auth.service';
 import { CreateUserDto } from '../dto/create-user.dto';
-// import { UpdateUserDto } from '../dto/update-user.dto';
 import { RequestWithUser } from '../entity/user.interface';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { Role } from 'src/enums/roles.enum';
-import { Roles } from 'src/permission/roles/roles.decorator.';
+import { AuthService } from 'src/auth/service/auth.service';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 import { RolesGuard } from 'src/permission/roles/roles.guard';
+import { Roles } from 'src/permission/roles/roles.decorator.';
+import { Role } from 'src/enums/roles.enum';
 
 @ApiTags('Users')
 @Controller('users/v1/')
@@ -24,20 +37,9 @@ export class UsersController {
     type: CreateUserDto,
   })
   async register(@Body() createUserDto: CreateUserDto) {
-    try {
-      const user = await this.usersService.create(createUserDto);
+    const user = await this.usersService.create(createUserDto);
 
-      return({
-        statusCode: HttpStatus.OK,
-        message: 'Register success',
-        data: user,
-      });
-    } catch (e) {
-      return({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Register failed',
-      });
-    }
+    return user;
   }
 
   @Post('do_login')
@@ -45,20 +47,9 @@ export class UsersController {
     type: CreateUserDto,
   })
   async login(@Body() body: { email: string; password: string }) {
-    try {
-      const user = await this.authService.login(body.email, body.password);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Login success',
-        data: user,
-      };
-    } catch (e) {
-      return({
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Login failed',
-      });
-    }
+    const user = await this.authService.login(body.email, body.password);
+    
+    return user
   }
 
   @Get('all_user')
@@ -72,13 +63,7 @@ export class UsersController {
   async getProfile(@Req() req: RequestWithUser) {
     const user = req.user;
 
-    return ({
-      statusCode: HttpStatus.OK,
-      message: 'Profile data',
-      data: {
-        user,
-      }
-    });
+    return this.usersService.findOneById(user.id);
   }
 
   @Patch('update/profile')
@@ -90,6 +75,16 @@ export class UsersController {
     await this.usersService.update(user.id, updateUserDto);
 
     return this.usersService.findOneByEmail(user.email);
+  }
+
+  @Patch('/update/role/:id')
+  @ApiBearerAuth()
+  @Roles(Role.SUPER_ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateRole(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+    await this.usersService.updateRole(id, updateUserDto);
+    
+    return this.usersService.findOneById(id);
   }
 
   @Delete('remove/profile')
@@ -106,19 +101,8 @@ export class UsersController {
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteUser(@Param('id') id: number) {
-    try {
-      const user = await this.usersService.removeUser(id);
-
-      return ({
-        statusCode: HttpStatus.OK,
-        message: 'User deleted',
-        data: user,
-      });
-    } catch (e) {
-      return ({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Failed to delete user',
-      });
-    }
+    const user = await this.usersService.removeUser(id);
+    
+    return user;
   }
 }

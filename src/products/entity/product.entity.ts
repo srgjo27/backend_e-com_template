@@ -26,5 +26,5 @@ export class Product {
   category: Category;
 
   @OneToMany(() => Review, review => review.product)
-  reviews: Review[];
+  reviews?: Review[];
 }

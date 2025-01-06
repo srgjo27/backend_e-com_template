@@ -55,6 +55,7 @@ export class ProductsService {
     async removeProduct(id: number): Promise<void>{
         const product = await this.findProductById(id);
         await this.productsRepository.remove(product);
+        return;
     }
 
     async createCategory(createCategoryDto: CreateCategoryDto): Promise<Category> {
@@ -63,7 +64,7 @@ export class ProductsService {
     }
 
     async findAllCategories(): Promise<Category[]>{
-        return this.categoriesRepository.find({relations: ['products']});
+        return this.categoriesRepository.find();
     }
 
     async findCategoryById(id: number): Promise<Category>{
@@ -88,7 +89,6 @@ export class ProductsService {
     async searchProducts(query: string): Promise<Product[]>{
         return this.productsRepository.createQueryBuilder('product')
             .where('product.name LIKE: query', {query: `%${query}%`})
-            .orWhere('product.description LIKE: query', { query: `%${query}%`})
             .getMany();
     }
 

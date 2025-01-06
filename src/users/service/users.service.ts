@@ -65,7 +65,17 @@ export class UsersService {
       }
     }
 
-    await this.usersRepository.update(id, { username, ...(password && { password: updateUserDto.password }) });
+    await this.usersRepository.update(id, { username, ...(password && { password: updateUserDto.password })});
+  }
+
+  async updateRole(id: number, updateUserDto: UpdateUserDto): Promise<void> {
+    const user = await this.findOneById(id);
+
+    if (user.role !== Role.SUPER_ADMIN) {
+      await this.usersRepository.update(id, { role: updateUserDto.role });
+    } else {
+      throw new Error('You are not allowed to update this user because it is a super admin');
+    }
   }
 
   async remove(id: number): Promise<void> {

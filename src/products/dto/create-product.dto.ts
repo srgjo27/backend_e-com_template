@@ -17,9 +17,8 @@ export class CreateProductDto {
   @IsString()
   sku: string;
 
-  @IsNotEmpty()
   @IsNumber()
-  quantity: number;
+  quantity?: number;
 
   @IsNotEmpty()
   @IsNumber()
